@@ -1,0 +1,1 @@
+{"version":3,"file":"map-to.js","sourceRoot":"","sources":["../../src/pipes/map-to.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,KAAK,CAAC,KAAU;IAC5B,OAAO,GAAG,EAAE;QACR,OAAO,CAAC,MAA2B,EAAuB,EAAE;YACxD,MAAM,CAAC,KAAK,GAAG,KAAK,CAAC;YACrB,OAAO,MAAM,CAAC;QAClB,CAAC,CAAC;IACN,CAAC,CAAA;AACL,CAAC"}

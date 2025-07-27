@@ -1,0 +1,45 @@
+{
+  "name": "@klodianimeri/pipejs",
+  "version": "1.0.0",
+  "type": "module",
+  "source": "src/index.ts",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.modern.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.module.js",
+  "unpkg": "./dist/index.umd.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "t": "tsc -w",
+    "test": "jest",
+    "bundle": "microbundle --generateTypes false --name pipejs"
+  },
+  "author": "Klodian Imeri",
+  "license": "Apache-2.0",
+  "description": "Pipe functions that provide convenient and efficient ways to work with iterators.",
+  "keywords": [
+    "Iterator",
+    "Iterable",
+    "Generator",
+    "AsyncIterator",
+    "AsyncIterable",
+    "AsyncGenerator",
+    "Async",
+    "Helper",
+    "Tools",
+    "Pull",
+    "Utils"
+  ],
+  "devDependencies": {
+    "@jest/globals": "^30.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.3",
+    "jest": "^30.0.3",
+    "ts-jest": "^29.4.0",
+    "terser": "^5.43.1",
+    "microbundle": "^0.15.1"
+  }
+}

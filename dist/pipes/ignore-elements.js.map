@@ -1,0 +1,1 @@
+{"version":3,"file":"ignore-elements.js","sourceRoot":"","sources":["../../src/pipes/ignore-elements.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,cAAc;IAC1B,OAAO,GAAG,EAAE;QACR,OAAO,CAAC,MAA2B,EAAuB,EAAE;YACxD,IAAI,MAAM,aAAN,MAAM,uBAAN,MAAM,CAAE,IAAI,EAAE,CAAC;gBACf,OAAO,MAAM,CAAC;YAClB,CAAC;QACL,CAAC,CAAC;IACN,CAAC,CAAA;AACL,CAAC"}

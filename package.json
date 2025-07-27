@@ -11,6 +11,10 @@
   "module": "./dist/index.module.js",
   "unpkg": "./dist/index.umd.js",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/klodianimeri/pipejs"
+  },
   "scripts": {
     "t": "tsc -w",
     "test": "jest",

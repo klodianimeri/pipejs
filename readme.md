@@ -117,7 +117,7 @@ values()
 
 ## Browser
 
-https://unpkg.com/@klodianimeri/pipejs@^1/
+https://unpkg.com/@klodianimeri/pipejs@^1/dist/index.umd.js
 
 The global namespace is pipejs:
 

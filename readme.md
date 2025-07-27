@@ -12,7 +12,13 @@ npm i @klodianimeri/pipejs
 
 ## Sync
 
-Signature: function* pipeSync(source: Iterable<any, any, unknown>, ...pipes: Array<Pipe>): Iterable<any, any, unknown>
+Signature
+
+```ts
+function* pipeSync(source: Iterable<any, any, unknown>, ...pipes: Array<Pipe>): Iterable<any, any, unknown>
+```
+
+Usage
 
 ```js
 import { pipeSync, filter, sum } from '@klodianimeri/pipejs';
@@ -31,7 +37,13 @@ for (let item of results) {
 
 ## Async
 
-Signature: async function* pipeAsync(source: AsyncIterable<any, any, unknown>, ...pipes: Array<Pipe>): AsyncIterable<any, any, unknown>
+Signature
+
+```ts
+async function* pipeAsync(source: AsyncIterable<any, any, unknown>, ...pipes: Array<Pipe>): AsyncIterable<any, any, unknown>
+```
+
+Usage
 
 ```js
 import { pipeAsync, filter, sum } from '@klodianimeri/pipejs';

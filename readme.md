@@ -59,7 +59,7 @@ let results = pipeAsync(asyncRange(0, 100000),
     sum()
 );
 
-for (let item of results) {
+for await (let item of results) {
     console.log(`Sum:`, item);
 }
 ```

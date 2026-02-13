@@ -1,8 +1,8 @@
 import { Pipe } from "../pipe.js";
-import { Yields, push, positiveInfinity } from "../util/index.js";
+import { Yields, push } from "../util/index.js";
 
 export function takeLast(count: number): Pipe {
-    count = (typeof count === "number" && count > 0) ? count : positiveInfinity();
+    count = (typeof count === "number" && count > 0) ? count : Infinity;
 
     return () => {
         let last: Array<any> = new Array<any>();

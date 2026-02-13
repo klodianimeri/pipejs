@@ -1,8 +1,8 @@
 import { Pipe } from "../pipe.js";
-import { Done, positiveInfinity } from "../util/index.js";
+import { Done } from "../util/index.js";
 
 export function take(count: number): Pipe {
-    count = (typeof count === "number" && count > 0) ? count : positiveInfinity();
+    count = (typeof count === "number" && count > 0) ? count : Infinity;
     return () => {
         var i: number = -1;
         return (result: IteratorResult<any>): IteratorResult<any> => {

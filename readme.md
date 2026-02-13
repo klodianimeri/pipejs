@@ -64,7 +64,7 @@ for await (let item of results) {
 }
 ```
 
-## Pipes
+## Operators
 
 ```ts
 at(index: number)
@@ -119,7 +119,7 @@ startWith(...elements: Array<any>)
 sum()
 symmetricDifference(source: Iterable<any, any, unknown>)
 takeLast(count: number)
-takeWhile(predicate: (element: any, inclusive?: number) => boolean, inclusive?: boolean)
+takeWhile(predicate: (element: any, index?: number) => boolean, inclusive?: boolean)
 take(count: number)
 toArray()
 toSet()
@@ -139,13 +139,15 @@ const { pipeSync } = pipejs;
 
 ## Build Statistics
 
+Full package including all the operators:
+
 ```
-    5.04 kB: index.cjs.gz
-    4.59 kB: index.cjs.br
-    3.36 kB: index.modern.js.gz
-    3.08 kB: index.modern.js.br
-    5.26 kB: index.module.js.gz
-    4.83 kB: index.module.js.br
-    5.08 kB: index.umd.js.gz
-    4.64 kB: index.umd.js.br
+       5 kB: index.cjs.gz
+    4.56 kB: index.cjs.br
+    3.32 kB: index.modern.js.gz
+    3.05 kB: index.modern.js.br
+    5.22 kB: index.module.js.gz
+    4.78 kB: index.module.js.br
+    5.04 kB: index.umd.js.gz
+    4.59 kB: index.umd.js.br
  ```

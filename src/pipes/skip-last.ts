@@ -1,8 +1,7 @@
 import { Pipe } from "../pipe.js";
-import { negativeInfinity } from "../util/index.js";
 
 export function skipLast(count: number): Pipe {
-    count = (typeof count === "number" && count > 0) ? count : negativeInfinity();
+    count = (typeof count === "number" && count > 0) ? count : -Infinity;
     return () => {
         let items: Array<any> = new Array<any>();
         return (result: IteratorResult<any>): IteratorResult<any> => {

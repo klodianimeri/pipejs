@@ -1,7 +1,7 @@
 import { Pipe } from "../pipe.js";
 import { Done } from "../util/index.js";
 
-export function takeWhile(predicate: (element: any, inclusive?: number) => boolean, inclusive?: boolean): Pipe {
+export function takeWhile(predicate: (element: any, index?: number) => boolean, inclusive?: boolean): Pipe {
     inclusive = typeof inclusive === 'boolean' ? inclusive : false;
 
     return () => {

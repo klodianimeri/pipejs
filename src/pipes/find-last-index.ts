@@ -11,7 +11,7 @@ export function findLastIndex(predicate: (element: any, index?: number) => boole
             if (result?.done) {
                 return [Yield(lastIndex), result];
             }
-            else if (predicate(result.value)) {
+            else if (predicate(result.value, i)) {
                 lastIndex = i;
             }
         };

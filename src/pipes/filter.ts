@@ -4,11 +4,12 @@ export function filter(predicate: (element: any, index?: number) => boolean): Pi
     return () => {
         let i: number = -1;
         return (result: IteratorResult<any>): IteratorResult<any> => {
-            ++i;
 
             if (result?.done) {
                 return result;
             }
+
+            ++i;
 
             if (!predicate(result.value, i)) return;
 

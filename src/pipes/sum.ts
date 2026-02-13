@@ -8,7 +8,7 @@ export function sum(): Pipe {
             if (result?.done) {
                 return [Yield(sum), result];
             }
-            if (typeof result.value === 'number') {
+            if (typeof result.value === 'number' && !isNaN(result.value)) {
                 sum += result.value;
             }
         };

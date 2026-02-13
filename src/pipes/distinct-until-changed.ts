@@ -4,11 +4,11 @@ export function distinctUntilChanged(comparator?: (previous: any, current: any) 
     comparator = typeof comparator === 'function' ? comparator : (a, b) => a === b;
 
     return () => {
-        let last: any;
+        let lastValue: any;
 
         return (result: IteratorResult<any>): IteratorResult<any> => {
-            if (result?.done || !comparator(result.value, last)) {
-                last = result.value;
+            if (result?.done || !comparator(lastValue, result.value)) {
+                lastValue = result.value;
                 return result;
             }
         };

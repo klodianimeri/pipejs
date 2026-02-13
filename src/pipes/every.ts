@@ -6,10 +6,13 @@ export function every(predicate: (element: any, index?: number) => boolean): Pip
         let i: number = -1;
 
         return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
-            ++i;
             if (result?.done) {
                 return [Yield(true), result];
-            } else if (!predicate(result.value, i)) {
+            }
+
+            ++i;
+
+            if (!predicate(result.value, i)) {
                 return [Yield(false), Done()];
             }
         };

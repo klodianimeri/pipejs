@@ -6,10 +6,10 @@ export function findLast(predicate: (element: any, index?: number) => boolean): 
         let i: number = -1;
         let last: any;
         return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
-            ++i;
             if (result?.done) {
                 return typeof last === 'undefined' ? result : [Yield(last), result];
             }
+            ++i;
             if (predicate(result.value, i)) {
                 last = result.value;
             }

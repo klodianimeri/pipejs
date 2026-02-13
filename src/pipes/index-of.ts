@@ -6,11 +6,13 @@ export function indexOf(value: any, fromIndex?: number): Pipe {
     return () => {
         let i: number = -1;
         return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
-            ++i;
             if (result?.done) {
                 return [Yield(-1), result];
             }
-            else if (i >= fromIndex && value === result.value) {
+
+            ++i;
+
+            if (i >= fromIndex && value === result.value) {
                 return [Yield(i), Done()];
             }
         };

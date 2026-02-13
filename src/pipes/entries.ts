@@ -5,10 +5,15 @@ export function entries(): Pipe {
         let i: number = -1;
 
         return (result: IteratorResult<any>): IteratorResult<any> => {
-            ++i;
-            if (!result.done && !Array.isArray(result.value)) {
-                result.value = [i, result.value];
+
+            if (result?.done) {
+                return result;
             }
+
+            ++i;
+
+            result.value = [i, result.value];
+
             return result;
         };
     }

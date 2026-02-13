@@ -2,7 +2,7 @@ import { Pipe } from "../pipe.js";
 import { Yields, push } from "../util/index.js";
 
 export function takeLast(count: number): Pipe {
-    count = (typeof count === "number" && count > 0) ? count : Infinity;
+    count = (typeof count === "number" && count > 0) ? count : 0;
 
     return () => {
         let last: Array<any> = new Array<any>();

@@ -6,10 +6,13 @@ export function findIndex(predicate: (element: any, index?: number) => boolean, 
     return () => {
         let i: number = -1;
         return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
-            ++i;
             if (result?.done) {
                 return result;
-            } else if (i >= fromIndex && predicate(result.value, i)) {
+            }
+
+            ++i;
+
+            if (i >= fromIndex && predicate(result.value, i)) {
                 return [Yield(i), Done()];
             }
         };

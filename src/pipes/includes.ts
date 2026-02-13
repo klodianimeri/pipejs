@@ -7,11 +7,13 @@ export function includes(value: any, fromIndex?: number): Pipe {
         let i: number = -1;
 
         return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
-            ++i;
             if (result?.done) {
                 return [Yield(false), result];
             }
-            else if (i >= fromIndex && result.value === value) {
+
+            ++i;
+
+            if (i >= fromIndex && result.value === value) {
                 return [Yield(true), Done()];
             }
         };

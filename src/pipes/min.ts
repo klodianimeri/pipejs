@@ -7,7 +7,9 @@ export function min(): Pipe {
         return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
             if (result?.done) {
                 return min === Infinity ? result : [Yield(min), result];
-            } else if (typeof result.value === 'number' && result.value < min) {
+            }
+
+            if (typeof result.value === 'number' && !isNaN(result.value) && result.value < min) {
                 min = result.value;
             }
         };

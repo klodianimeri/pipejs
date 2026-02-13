@@ -143,11 +143,11 @@ Full package including all the operators:
 
 ```
        5 kB: index.cjs.gz
-    4.56 kB: index.cjs.br
-    3.32 kB: index.modern.js.gz
+    4.55 kB: index.cjs.br
+    3.31 kB: index.modern.js.gz
     3.05 kB: index.modern.js.br
     5.22 kB: index.module.js.gz
-    4.78 kB: index.module.js.br
+    4.76 kB: index.module.js.br
     5.04 kB: index.umd.js.gz
     4.59 kB: index.umd.js.br
  ```

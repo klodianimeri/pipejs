@@ -8,7 +8,9 @@ export function max(): Pipe {
         return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
             if (result?.done) {
                 return max === (-Infinity) ? result : [Yield(max), result];
-            } else if (typeof result.value === 'number' && result.value > max) {
+            }
+
+            if (typeof result.value === 'number' && !isNaN(result.value) && result.value > max) {
                 max = result.value;
             }
         };

@@ -3,10 +3,15 @@ import { Yield, Done } from "../util/index.js";
 
 export function some(predicate: (element: any, index?: number) => boolean): Pipe {
     return () => {
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        let i = -1;
+        return (result: IteratorResult<any>): any => {
             if (result?.done) {
                 return [Yield(false), result];
-            } else if (predicate(result.value)) {
+            }
+
+            i++;
+
+            if (predicate(result.value, i)) {
                 return [Yield(true), Done()];
             }
         };

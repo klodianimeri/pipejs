@@ -4,10 +4,10 @@ export function distinctUntilKeyChanged(key: string, comparator?: (previous: any
     comparator = typeof comparator === 'function' ? comparator : (a, b) => a === b;
 
     return () => {
-        let last: any;
+        let lastValue: any;
         return (result: IteratorResult<any>): IteratorResult<any> => {
-            if (result?.done || !result.value?.hasOwnProperty(key) || !last?.hasOwnProperty(key) || !comparator(result.value[key], last[key])) {
-                last = result.value;
+            if (result?.done || !result.value?.hasOwnProperty(key) || !lastValue?.hasOwnProperty(key) || !comparator(lastValue[key], result.value[key])) {
+                lastValue = result.value;
                 return result;
             }
         };

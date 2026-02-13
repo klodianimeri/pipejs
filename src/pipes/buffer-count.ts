@@ -14,9 +14,7 @@ export function bufferCount(count: number, every?: number): Pipe {
             buffer.push(result.value);
             if (buffer.length === count) {
                 result.value = new Array<any>(...buffer);
-                for (let i = 0; i < every; i++) {
-                    buffer.shift();
-                }
+                buffer.splice(0, every);
                 return result;
             }
         };

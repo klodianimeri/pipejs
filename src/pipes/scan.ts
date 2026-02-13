@@ -5,14 +5,18 @@ export function scan(accumulator: (accumulator: any, currentValue: any, index?: 
         let i: number = -1;
         let value: any;
         return (result: IteratorResult<any>): IteratorResult<any> => {
+
+            if (result?.done) {
+                return result;
+            }
+
             ++i;
+
             if (i === 0) {
                 value = initialValue ?? result.value;
             }
 
-            if (!result?.done) {
-                result.value = value = accumulator(value, result.value, i);
-            }
+            result.value = value = accumulator(value, result.value, i);
 
             return result;
         };

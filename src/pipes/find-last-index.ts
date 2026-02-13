@@ -7,11 +7,13 @@ export function findLastIndex(predicate: (element: any, index?: number) => boole
         let i: number = -1;
         let lastIndex: number = -1;
         return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
-            ++i;
             if (result?.done) {
                 return [Yield(lastIndex), result];
             }
-            else if (predicate(result.value, i)) {
+
+            ++i;
+
+            if (i >= fromIndex && predicate(result.value, i)) {
                 lastIndex = i;
             }
         };

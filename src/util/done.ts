@@ -1,1 +1,0 @@
-export const Done = (value?: any) => Object({ value: value, done: true });

@@ -1,13 +1,19 @@
-import { Pipe } from "../pipe.js";
-import { assertSync } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { assertSyncs } from "../util/index.js";
 
-export function difference(source: Iterable<any, any, unknown>): Pipe {
-    assertSync(source);
+export function difference<I>(...sources: Array<Iterable<any>>): Pipe<I, I> {
+    assertSyncs(sources);
 
     return () => {
-        let sourceSet: Set<any> = source instanceof Set ? source : new Set<any>(source);
+        let allSourcesItems: Array<any> = new Array<any>();
 
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        for (const source of sources) {
+            allSourcesItems.push(...source);
+        }
+
+        const sourceSet: Set<any> = new Set<any>(allSourcesItems);
+
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }

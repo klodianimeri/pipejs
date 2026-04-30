@@ -1,9 +1,9 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function keys(): Pipe {
+export function keys<I>(): Pipe<I, I extends [infer K, any] ? K : number> {
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I extends [infer K, any] ? K : number> => {
             if (result?.done) {
                 return result;
             }
@@ -13,10 +13,10 @@ export function keys(): Pipe {
             if (Array.isArray(result.value) && result.value.length == 2) {
                 result.value = result.value[0];
             } else {
-                result.value = i;
+                (result as IteratorResult<number>).value = i;
             }
 
-            return result;
+            return result as IteratorResult<I extends [infer K, any] ? K : number>;
         };
     }
 }

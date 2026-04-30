@@ -1,9 +1,9 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function filter(predicate: (element: any, index?: number) => boolean): Pipe {
+export function filter<I>(predicate: (element: I, index: number) => boolean): Pipe<I, I> {
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
 
             if (result?.done) {
                 return result;

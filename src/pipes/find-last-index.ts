@@ -1,19 +1,18 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function findLastIndex(predicate: (element: any, index?: number) => boolean, fromIndex?: number): Pipe {
-    fromIndex = typeof fromIndex === 'number' ? fromIndex : 0;
+export function findLastIndex<I>(predicate: (element: I, index: number) => boolean, fromIndex?: number): Pipe<I, number> {
+    const start = typeof fromIndex === 'number' ? fromIndex : 0;
     return () => {
         let i: number = -1;
         let lastIndex: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
             if (result?.done) {
-                return [Yield(lastIndex), result];
+                return [{ value: lastIndex }, result];
             }
 
             ++i;
 
-            if (i >= fromIndex && predicate(result.value, i)) {
+            if (i >= start && predicate(result.value, i)) {
                 lastIndex = i;
             }
         };

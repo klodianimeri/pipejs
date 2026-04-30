@@ -1,14 +1,12 @@
-import { Pipe } from "../pipe.js";
-import { Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function first(): Pipe {
+export function first<I>(): Pipe<I, I> {
     return () => {
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }
-
-            return [result, Done()];
+            return [result, { done: true, value: undefined }];
         };
     }
 }

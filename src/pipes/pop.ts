@@ -1,15 +1,15 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function pop(): Pipe {
+export function pop<I>(): Pipe<I, I> {
     return () => {
-        let last: any;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        let last: IteratorResult<I>;
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }
             let lastResult = last;
             last = result;
-            if (typeof last !== "undefined") {
+            if (typeof lastResult !== "undefined") {
                 return lastResult;
             }
         };

@@ -1,17 +1,20 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function reduce(accumulator: (accumulator: any, currentValue: any, index?: number) => any, initialValue?: any): Pipe {
+export function reduce<I, T>(
+    accumulator: (acc: T, currentValue: I, index: number) => T,
+    initialValue?: T
+): Pipe<I, T> {
     return () => {
         let i: number = -1;
-        let value: any;
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        let value: T;
+        return (result: IteratorResult<I>): PipeIteratorResult<T> => {
             ++i;
             if (i === 0) {
-                value = initialValue ?? result.value;
+                value = initialValue ?? (result.value as unknown as T);
             }
+
             if (result?.done) {
-                return [Yield(value), result];
+                return [{ value }, result];
             }
 
             value = accumulator(value, result.value, i);

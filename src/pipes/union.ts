@@ -1,27 +1,31 @@
-import { Pipe } from "../pipe.js";
-import { assertSync, push, Yields } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { assertSyncs } from "../util/index.js";
 
-export function union(source: Iterable<any, any, unknown>): Pipe {
-    assertSync(source);
+export function union<I>(...sources: Array<Iterable<any>>): Pipe<I, I | any> {
+    assertSyncs(sources);
 
     return () => {
-        let exists: Set<any> = new Set<any>();
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        let buffer: Set<I | any> = new Set<I | any>();
+
+        return (result: IteratorResult<I>): PipeIteratorResult<I | any> => {
             if (result?.done) {
                 let results: Array<any> = new Array<any>();
 
-                for (const item of source) {
-                    if (!exists.has(item)) {
-                        exists.add(item);
-                        results.push(item);
+                for (const source of sources) {
+                    for (const item of source) {
+                        if (!buffer.has(item as any)) {
+                            buffer.add(item as any);
+                            results.push({ value: item });
+                        }
                     }
                 }
 
-                return push(Yields(results), result);
+                results.push(result);
+                return results;
             }
 
-            if (!exists.has(result.value)) {
-                exists.add(result.value);
+            if (!buffer.has(result.value)) {
+                buffer.add(result.value);
                 return result;
             }
         };

@@ -1,13 +1,12 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function findLast(predicate: (element: any, index?: number) => boolean): Pipe {
+export function findLast<I>(predicate: (element: I, index: number) => boolean): Pipe<I, I> {
     return () => {
         let i: number = -1;
-        let last: any;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        let last: I | undefined;
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
-                return typeof last === 'undefined' ? result : [Yield(last), result];
+                return typeof last === 'undefined' ? result : [{ value: last }, result];
             }
             ++i;
             if (predicate(result.value, i)) {

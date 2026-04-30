@@ -1,18 +1,17 @@
-import { Pipe } from "../pipe.js";
-import { Yield, Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function some(predicate: (element: any, index?: number) => boolean): Pipe {
+export function some<I>(predicate: (element: I, index: number) => boolean): Pipe<I, boolean> {
     return () => {
         let i = -1;
-        return (result: IteratorResult<any>): any => {
+        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
             if (result?.done) {
-                return [Yield(false), result];
+                return [{ value: false }, result];
             }
 
             i++;
 
             if (predicate(result.value, i)) {
-                return [Yield(true), Done()];
+                return [{ value: true }, { done: true, value: undefined }];
             }
         };
     }

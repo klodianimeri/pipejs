@@ -1,15 +1,14 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function toArray(): Pipe {
+export function toArray<I>(): Pipe<I, I[]> {
     return () => {
-        let buffer: Array<any> = new Array<any>();
+        let buffer: Array<I> = new Array<I>();
         var i: number = -1;
 
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I[]> => {
             ++i;
             if (result?.done) {
-                return [Yield(buffer), result];
+                return [{ value: buffer }, result];
             }
 
             buffer.push(result.value);

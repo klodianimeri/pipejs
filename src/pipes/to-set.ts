@@ -1,12 +1,11 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function toSet(): Pipe {
+export function toSet<I>(): Pipe<I, Set<I>> {
     return () => {
-        let buffer: Set<any> = new Set<any>();
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        let buffer: Set<I> = new Set<I>();
+        return (result: IteratorResult<I>): PipeIteratorResult<Set<I>> => {
             if (result?.done) {
-                return [Yield(buffer), result];
+                return [{ value: buffer }, result];
             }
 
             buffer.add(result.value);

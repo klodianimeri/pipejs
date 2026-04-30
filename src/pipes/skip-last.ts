@@ -1,17 +1,17 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function skipLast(count: number): Pipe {
-    count = (typeof count === "number" && count > 0) ? count : 0;
+export function skipLast<I>(count: number): Pipe<I, I> {
+    const skipCount = (typeof count === "number" && count > 0) ? count : 0;
     return () => {
-        let items: Array<any> = new Array<any>();
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        let items: Array<IteratorResult<I>> = new Array<IteratorResult<I>>();
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }
 
             items.push(result);
 
-            if (items.length > count) {
+            if (items.length > skipCount) {
                 return items.shift();
             }
         };

@@ -1,11 +1,12 @@
-import { Pipe } from "../pipe.js";
-import { Yields, push } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function endWith(...elements: Array<any>): Pipe {
+export function endWith<I, T>(...elements: Array<T>): Pipe<I, I | T> {
     return () => {
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I | T> => {
             if (result.done) {
-                return push(Yields(elements), result);
+                const results = Array.from(elements).map((s) => Object({ value: s }))
+                results.push(result);
+                return results;
             } else {
                 return result;
             }

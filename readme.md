@@ -1,8 +1,10 @@
 # PipeJS
 
-This package aims to unify piping functions for both sync and async generators. Ex: same sum() pipe that can be used for both generators. 
+PipeJS provides a convenient and efficient way to work with iterators by providing unified piping functions for both sync and async iterables / generators.
 
-The idea is to reduce the bundle sizes that comes from writing twice the same pipe to be used for sync and async code.
+The primary goal of this package is to reduce bundle sizes. Instead of writing separate pipe logic for synchronous and asynchronous code, you can use the same utility (like sum() or map()) for both.
+
+PipeJS is a pull-based library designed to minimize microtask overhead. By using a unified execution loop, it processes async chains with a single await per source item. This architecture avoids the performance bottleneck of deep promise chains, ensuring that even complex pipelines remain fast and efficient.
 
 ## Installation
 
@@ -15,7 +17,7 @@ npm i @klodianimeri/pipejs
 Signature
 
 ```ts
-function* pipeSync(source: Iterable<any, any, unknown>, ...pipes: Array<Pipe>): Iterable<any, any, unknown>
+function* pipeSync(source: Iterable<any>, ...pipes: Array<Pipe>): Iterable<any>
 ```
 
 Usage
@@ -40,7 +42,7 @@ for (let item of results) {
 Signature
 
 ```ts
-async function* pipeAsync(source: AsyncIterable<any, any, unknown>, ...pipes: Array<Pipe>): AsyncIterable<any, any, unknown>
+async function* pipeAsync(source: AsyncIterable<any>, ...pipes: Array<Pipe>): AsyncIterable<any>
 ```
 
 Usage
@@ -70,10 +72,10 @@ for await (let item of results) {
 at(index: number)
 average()
 bufferCount(count: number, every?: number)
-concat(source: Iterable<any, any, unknown>)
+concat(source: Iterable<any>)
 count()
 defaultIfEmpty(value: any)
-difference(source: Iterable<any, any, unknown>)
+difference(...sources: Array<Iterable<any>>)
 distinctUntilChanged(comparator?: (previous: any, current: any) => boolean)
 distinctUntilKeyChanged(key: string, comparator?: (previous: any, current: any) => boolean)
 distinct(keyselector?: (element: any) => any)
@@ -93,11 +95,11 @@ flat(depth?: number) *flats only arrays
 ignoreElements()
 includes(value: any, fromIndex?: number)
 indexOf(value: any, fromIndex?: number)
-intersection(source: Iterable<any, any, unknown>)
-isDisjointFrom(source: Iterable<any, any, unknown>)
+intersection(...sources: Array<Iterable<any>>)
+isDisjointFrom(...sources: Array<Iterable<any>>)
 isEmpty()
-isSubsetOf(source: Iterable<any, any, unknown>)
-isSupersetOf(source: Iterable<any, any, unknown>)
+isSubsetOf(...sources: Array<Iterable<any>>)
+isSupersetOf(...sources: Array<Iterable<any>>)
 keys()
 lastIndexOf(value: any, fromIndex?: number)
 last()
@@ -117,37 +119,22 @@ some(predicate: (element: any, index?: number) => boolean)
 splice(start: number, deleteCount: number, ...elements: Array<any>)
 startWith(...elements: Array<any>)
 sum()
-symmetricDifference(source: Iterable<any, any, unknown>)
+symmetricDifference(...sources: Array<Iterable<any>>)
 takeLast(count: number)
 takeWhile(predicate: (element: any, index?: number) => boolean, inclusive?: boolean)
 take(count: number)
 toArray()
 toSet()
-union(source: Iterable<any, any, unknown>)
+union(...sources: Array<Iterable<any>>)
 values()
 ```
 
 ## Browser
 
-https://unpkg.com/@klodianimeri/pipejs@^1/dist/index.umd.js
+https://unpkg.com/@klodianimeri/pipejs@^2/dist/index.global.js
 
 The global namespace is pipejs:
 
 ```js
 const { pipeSync } = pipejs;
 ```
-
-## Build Statistics
-
-Full package including all the operators:
-
-```
-       5 kB: index.cjs.gz
-    4.55 kB: index.cjs.br
-    3.31 kB: index.modern.js.gz
-    3.05 kB: index.modern.js.br
-    5.22 kB: index.module.js.gz
-    4.76 kB: index.module.js.br
-    5.04 kB: index.umd.js.gz
-    4.59 kB: index.umd.js.br
- ```

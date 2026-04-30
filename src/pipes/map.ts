@@ -1,18 +1,18 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function map(callbackFn: (element: any, index?: number) => any): Pipe {
-    callbackFn = typeof callbackFn === 'function' ? callbackFn : (e) => e;
+export function map<I, T>(callbackFn: (element: I, index: number) => T): Pipe<I, T> {
+    const fn = typeof callbackFn === 'function' ? callbackFn : (e: any) => e;
 
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<T> => {
             ++i;
             if (result?.done) {
                 return result;
             }
 
-            result.value = callbackFn(result.value, i);
-            return result;
+            (result as any).value = fn(result.value, i);
+            return result as unknown as IteratorResult<T>;
         };
     }
 }

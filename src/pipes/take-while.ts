@@ -1,12 +1,11 @@
-import { Pipe } from "../pipe.js";
-import { Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function takeWhile(predicate: (element: any, index?: number) => boolean, inclusive?: boolean): Pipe {
-    inclusive = typeof inclusive === 'boolean' ? inclusive : false;
+export function takeWhile<I>(predicate: (element: I, index: number) => boolean, inclusive?: boolean): Pipe<I, I> {
+    const inc = typeof inclusive === 'boolean' ? inclusive : false;
 
     return () => {
         var i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             ++i;
 
             if (result?.done) {
@@ -14,11 +13,11 @@ export function takeWhile(predicate: (element: any, index?: number) => boolean, 
             }
 
             if (!predicate(result.value, i)) {
-                if (inclusive) {
-                    return [result, Done()]
+                if (inc) {
+                    return [result, { done: true, value: undefined }];
                 }
 
-                return Done();
+                return { done: true, value: undefined };
             }
 
             return result;

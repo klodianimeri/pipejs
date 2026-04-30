@@ -1,13 +1,13 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function distinctUntilChanged(comparator?: (previous: any, current: any) => boolean): Pipe {
-    comparator = typeof comparator === 'function' ? comparator : (a, b) => a === b;
+export function distinctUntilChanged<I>(comparator?: (previous: I, current: I) => boolean): Pipe<I, I> {
+    const comp = typeof comparator === 'function' ? comparator : (a: I, b: I) => a === b;
 
     return () => {
-        let lastValue: any;
+        let lastValue: I;
 
-        return (result: IteratorResult<any>): IteratorResult<any> => {
-            if (result?.done || !comparator(lastValue, result.value)) {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
+            if (result?.done || !comp(lastValue, result.value)) {
                 lastValue = result.value;
                 return result;
             }

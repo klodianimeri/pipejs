@@ -1,19 +1,18 @@
-import { Pipe } from "../pipe.js";
-import { Done, Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function indexOf(value: any, fromIndex?: number): Pipe {
-    fromIndex = typeof fromIndex === 'number' ? fromIndex : 0;
+export function indexOf<I>(value: I, fromIndex?: number): Pipe<I, number> {
+    const start = typeof fromIndex === 'number' ? fromIndex : 0;
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
             if (result?.done) {
-                return [Yield(-1), result];
+                return [{ value: -1 }, result];
             }
 
             ++i;
 
-            if (i >= fromIndex && value === result.value) {
-                return [Yield(i), Done()];
+            if (i >= start && value === result.value) {
+                return [{ value: i }, { done: true, value: undefined }];
             }
         };
     }

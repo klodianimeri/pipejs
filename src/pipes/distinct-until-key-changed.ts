@@ -1,15 +1,25 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function distinctUntilKeyChanged(key: string, comparator?: (previous: any, current: any) => boolean): Pipe {
-    comparator = typeof comparator === 'function' ? comparator : (a, b) => a === b;
+export function distinctUntilKeyChanged<I extends Record<string, any>, K extends keyof I>(
+    key: K,
+    comparator?: (previous: I[K], current: I[K]) => boolean
+): Pipe<I, I> {
+    const comp = typeof comparator === 'function' ? comparator : (a: any, b: any) => a === b;
 
     return () => {
-        let lastValue: any;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
-            if (result?.done || !result.value?.hasOwnProperty(key) || !lastValue?.hasOwnProperty(key) || !comparator(lastValue[key], result.value[key])) {
-                lastValue = result.value;
-                return result;
+        let lastValue: I | undefined;
+
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
+            if (result.done) return result;
+
+            const currentValue = result.value;
+
+            if (lastValue !== undefined && comp(lastValue[key], currentValue[key])) {
+                return;
             }
+
+            lastValue = currentValue;
+            return result;
         };
     }
 }

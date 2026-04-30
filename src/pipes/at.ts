@@ -1,11 +1,10 @@
-import { Pipe } from "../pipe.js";
-import { Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function at(index: number): Pipe {
+export function at<I>(index: number): Pipe<I, I> {
     return () => {
         let i: number = -1;
 
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }
@@ -13,7 +12,7 @@ export function at(index: number): Pipe {
             ++i;
 
             if (i === index) {
-                return [result, Done()];
+                return [result, { done: true, value: undefined }];
             }
         };
     }

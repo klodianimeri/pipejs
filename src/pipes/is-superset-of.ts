@@ -1,17 +1,23 @@
-import { Pipe } from "../pipe.js";
-import { assertSync, Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { assertSyncs } from "../util/index.js";
 
-export function isSupersetOf(source: Iterable<any, any, unknown>): Pipe {
-    assertSync(source);
+export function isSupersetOf<I>(...sources: Array<Iterable<any>>): Pipe<I, boolean> {
+    assertSyncs(sources);
 
     return () => {
-        let sourceSet: Set<any> = source instanceof Set ? source : new Set<any>(source);
+        let allSourcesItems: Array<any> = [];
+
+        for (const source of sources) {
+            allSourcesItems.push(...source);
+        }
+
+        const sourceSet: Set<any> = new Set<any>(allSourcesItems);
 
         let found: number = 0;
 
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
             if (result?.done) {
-                return found === sourceSet.size ? [Yield(true), result] : [Yield(false), result];
+                return found === sourceSet.size ? [{ value: true }, result] : [{ value: false }, result];
             }
 
             if (sourceSet.has(result.value)) {

@@ -1,13 +1,12 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function max(): Pipe {
+export function max(): Pipe<number, number> {
     return () => {
         let max: number = -Infinity;
 
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<number>): PipeIteratorResult<number> => {
             if (result?.done) {
-                return max === (-Infinity) ? result : [Yield(max), result];
+                return max === (-Infinity) ? result : [{ value: max }, result];
             }
 
             if (typeof result.value === 'number' && !isNaN(result.value) && result.value > max) {

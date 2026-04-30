@@ -1,13 +1,16 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function reverse(): Pipe {
+export function reverse<I>(): Pipe<I, I> {
     return () => {
-        let buffer: Array<any> = new Array<any>();
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        let buffer: Array<IteratorResult<I>> = new Array<IteratorResult<I>>();
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
-                return [...buffer, result];
+                buffer = buffer.reverse();
+                buffer.push(result);
+                return buffer;
             }
-            buffer.unshift(result);
+
+            buffer.push(result);
         };
     }
 }

@@ -1,21 +1,21 @@
-import { Pipe } from "../pipe.js";
-import { Yields, push } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function takeLast(count: number): Pipe {
+export function takeLast<I>(count: number): Pipe<I, I> {
     count = (typeof count === "number" && count > 0) ? count : 0;
 
     return () => {
-        let last: Array<any> = new Array<any>();
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        let last: Array<IteratorResult<I>> = new Array<IteratorResult<I>>();
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
-                return push(Yields(last), result);
+                last.push(result);
+                return last;
             }
 
             if (last.length === count) {
                 last.shift();
             }
 
-            last.push(result.value);
+            last.push(result);
         };
     }
 }

@@ -1,10 +1,9 @@
-import { Pipe } from "../pipe.js";
-import { Done, Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function isEmpty(): Pipe {
+export function isEmpty<I>(): Pipe<I, boolean> {
     return () => {
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
-            return result?.done ? [Yield(true), result] : [Yield(false), Done()];
+        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
+            return result?.done ? [{ value: true }, result] : [{ value: false }, { done: true, value: undefined }];
         };
     }
 }

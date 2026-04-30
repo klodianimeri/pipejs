@@ -1,1 +1,0 @@
-export const Yield = (value: any): IteratorYieldResult<any> => { return { value: value, done: false } };

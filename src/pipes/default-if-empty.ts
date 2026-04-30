@@ -1,18 +1,17 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function defaultIfEmpty(value: any): Pipe {
+export function defaultIfEmpty<I, T>(value: T): Pipe<I, I | T> {
     return () => {
         let isempty: boolean = true;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I | T> => {
             if (result?.done) {
                 if (isempty) {
-                    return [Yield(value), result];
+                    return [{ value }, result];
                 }
             } else {
                 isempty = false;
             }
-            return result;
+            return result as IteratorResult<I | T>;
         };
     }
 }

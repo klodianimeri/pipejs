@@ -2,14 +2,10 @@
     "compilerOptions": {
         "target": "es2018",
         "module": "esnext",
-        "moduleResolution": "node",
         "sourceMap": true,
         "rootDir": "src",
         "outDir": "dist",
-        // "noEmit": false,
-        // "baseUrl": ".",
         "removeComments": true,
-        "downlevelIteration": true,
         "declaration": true
     },
     "exclude": [

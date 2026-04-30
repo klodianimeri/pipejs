@@ -1,20 +1,26 @@
-import { Pipe } from "../pipe.js";
-import { assertSync, Done, Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { assertSyncs } from "../util/index.js";
 
-export function isDisjointFrom(source: Iterable<any, any, unknown>): Pipe {
-    assertSync(source);
+export function isDisjointFrom<I>(...sources: Array<Iterable<any>>): Pipe<I, boolean> {
+    assertSyncs(sources);
 
     return () => {
 
-        let sourceSet: Set<any> = source instanceof Set ? source : new Set<any>(source);
+        let allSourcesItems: Array<any> = [];
 
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        for (const source of sources) {
+            allSourcesItems.push(...source);
+        }
+
+        const sourceSet: Set<any> = new Set<any>(allSourcesItems);
+
+        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
             if (result?.done) {
-                return [Yield(true), result];
+                return [{ value: true }, result];
             }
 
             if (sourceSet.has(result.value)) {
-                return [Yield(false), Done()];
+                return [{ value: false }, { done: true, value: undefined }];
             }
         };
     }

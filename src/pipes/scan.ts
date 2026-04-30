@@ -1,24 +1,26 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function scan(accumulator: (accumulator: any, currentValue: any, index?: number) => any, initialValue?: any): Pipe {
+export function scan<I, T>(accumulator: (acc: T, currentValue: I, index: number) => T, initialValue?: T): Pipe<I, T> {
     return () => {
         let i: number = -1;
-        let value: any;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        let value: T;
+        return (result: IteratorResult<I>): PipeIteratorResult<T> => {
 
             if (result?.done) {
-                return result;
+                return result as unknown as IteratorResult<T>;
             }
 
             ++i;
 
             if (i === 0) {
-                value = initialValue ?? result.value;
+                value = initialValue ?? (result.value as unknown as T);
             }
 
-            result.value = value = accumulator(value, result.value, i);
+            value = accumulator(value, result.value, i);
 
-            return result;
+            (result as unknown as IteratorResult<T>).value = value;
+
+            return result as unknown as IteratorResult<T>;
         };
     }
 }

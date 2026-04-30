@@ -1,10 +1,10 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function entries(): Pipe {
+export function entries<I>(): Pipe<I, [number, I]> {
     return () => {
         let i: number = -1;
 
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<[number, I]> => {
 
             if (result?.done) {
                 return result;
@@ -12,9 +12,9 @@ export function entries(): Pipe {
 
             ++i;
 
-            result.value = [i, result.value];
+            (result as IteratorResult<[number, I]>).value = [i, result.value];
 
-            return result;
+            return result as IteratorResult<[number, I]>;
         };
     }
 }

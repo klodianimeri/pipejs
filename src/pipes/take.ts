@@ -1,14 +1,13 @@
-import { Pipe } from "../pipe.js";
-import { Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function take(count: number): Pipe {
-    count = (typeof count === "number" && count > 0) ? count : Infinity;
+export function take<I>(count: number): Pipe<I, I> {
+    const limit = (typeof count === "number" && count > 0) ? count : Infinity;
     return () => {
         var i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             ++i;
-            if (i >= count) {
-                return Done();
+            if (i >= limit) {
+                return { done: true, value: undefined };
             }
             return result;
         };

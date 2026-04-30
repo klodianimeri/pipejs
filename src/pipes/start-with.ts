@@ -1,16 +1,17 @@
-import { Pipe } from "../pipe.js";
-import { Yields, push } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function startWith(...elements: Array<any>): Pipe {
+export function startWith<I, T>(...elements: Array<T>): Pipe<I, I | T> {
     return () => {
         let sent: boolean = false;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I | T> => {
             if (!sent) {
                 sent = true;
-                return push(Yields(elements), result);
+                const results = elements.map(e => Object({ value: e }));
+                results.push(result);
+                return results;
             }
 
-            return result;
+            return result as IteratorResult<I | T>;
         };
     }
 }

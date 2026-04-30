@@ -1,14 +1,13 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function last(): Pipe {
+export function last<T>(): Pipe<T, T> {
     return () => {
         let i: number = -1;
-        let last: any;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        let last: T;
+        return (result: IteratorResult<T>): PipeIteratorResult<T> => {
             ++i;
             if (result?.done) {
-                return i === 0 ? result : [Yield(last), result];
+                return i === 0 ? result : [{ value: last }, result];
             }
             last = result.value;
         };

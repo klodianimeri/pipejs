@@ -1,6 +1,6 @@
 
-export type PipeIteratorResult<T = any, TReturn = any> = IteratorResult<T, TReturn> | Array<IteratorResult<T, TReturn>>;
+export type PipeIteratorResult<T = any, TReturn = any> = IteratorResult<T, TReturn> | Array<IteratorResult<T, TReturn>> | undefined;
 
-export type PipeIterator<T = any, TReturn = any> = (value: IteratorResult<T, TReturn>) => PipeIteratorResult<T, TReturn>;
+export type PipeIterator<I = any, T = any, TReturn = any> = (value: IteratorResult<I, TReturn>) => PipeIteratorResult<T, TReturn>;
 
-export type Pipe<T = any, TReturn = any> = () => PipeIterator<T, TReturn>;
+export type Pipe<I = any, T = I, TReturn = any> = () => PipeIterator<I, T, TReturn>;

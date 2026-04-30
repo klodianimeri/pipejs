@@ -1,12 +1,11 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function sum(): Pipe {
+export function sum<I>(): Pipe<I, number> {
     return () => {
         let sum: number = 0;
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
             if (result?.done) {
-                return [Yield(sum), result];
+                return [{ value: sum }, result];
             }
             if (typeof result.value === 'number' && !isNaN(result.value)) {
                 sum += result.value;

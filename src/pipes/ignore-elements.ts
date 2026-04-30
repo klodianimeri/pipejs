@@ -1,10 +1,10 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function ignoreElements(): Pipe {
+export function ignoreElements<I>(): Pipe<I, never> {
     return () => {
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<never> => {
             if (result?.done) {
-                return result;
+                return result as IteratorResult<never>;
             }
         };
     }

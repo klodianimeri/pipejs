@@ -1,12 +1,11 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function min(): Pipe {
+export function min(): Pipe<number, number> {
     return () => {
         let min: number = Infinity;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<number>): PipeIteratorResult<number> => {
             if (result?.done) {
-                return min === Infinity ? result : [Yield(min), result];
+                return min === Infinity ? result : [{ value: min }, result];
             }
 
             if (typeof result.value === 'number' && !isNaN(result.value) && result.value < min) {

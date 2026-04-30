@@ -1,18 +1,20 @@
-import { Pipe } from "../pipe.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function distinct(keyselector?: (element: any) => any): Pipe {
-    keyselector = typeof keyselector === 'function' ? keyselector : (e) => e;
+export function distinct<I, K = I>(keyselector?: (element: I) => K): Pipe<I, I> {
+    const selector = typeof keyselector === 'function' ? keyselector : (e: I) => e as unknown as K;
 
     return () => {
-        let elements: Set<any> = new Set<any>();
+        const elements = new Set<K>();
 
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }
 
-            if (!elements.has(keyselector(result.value))) {
-                elements.add(keyselector(result.value));
+            const key = selector(result.value);
+
+            if (!elements.has(key)) {
+                elements.add(key);
                 return result;
             }
         };

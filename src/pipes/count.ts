@@ -1,13 +1,12 @@
-import { Pipe } from "../pipe.js";
-import { Yield } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function count(): Pipe {
+export function count<I>(): Pipe<I, number> {
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
             ++i;
             if (result?.done) {
-                return [Yield(i), result];
+                return [{ value: i }, result];
             }
         };
     }

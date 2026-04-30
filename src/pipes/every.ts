@@ -1,19 +1,18 @@
-import { Pipe } from "../pipe.js";
-import { Yield, Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function every(predicate: (element: any, index?: number) => boolean): Pipe {
+export function every<I>(predicate: (element: I, index: number) => boolean): Pipe<I, boolean> {
     return () => {
         let i: number = -1;
 
-        return (result: IteratorResult<any>): Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
             if (result?.done) {
-                return [Yield(true), result];
+                return [{ value: true }, result];
             }
 
             ++i;
 
             if (!predicate(result.value, i)) {
-                return [Yield(false), Done()];
+                return [{ value: false }, { done: true, value: undefined }];
             }
         };
     }

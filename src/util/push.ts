@@ -1,1 +1,0 @@
-export const push = (array: Array<any>, value: any) => { array.splice(array.length, 0, value); return array; }

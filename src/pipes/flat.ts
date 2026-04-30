@@ -1,15 +1,14 @@
-import { Pipe } from "../pipe.js";
-import { Yields } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function flat(depth?: number): Pipe {
-    depth = (typeof depth === 'number' && depth >= 1) ? depth : 1;
+export function flat<I>(depth?: number): Pipe<I, any> {
+    const d = (typeof depth === 'number' && depth >= 1) ? depth : 1;
     return () => {
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
-            if (result?.done || typeof result.value[Symbol.iterator] !== 'function') {
+        return (result: IteratorResult<any>): PipeIteratorResult => {
+            if (result?.done || !result.value || typeof result.value[Symbol.iterator] !== 'function') {
                 return result;
             }
 
-            return Yields(Array.from(result.value).flat(depth));
+            return Array.from(result.value).flat(d).map((s) => Object({ value: s }));
         };
     }
 }

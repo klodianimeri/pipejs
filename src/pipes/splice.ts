@@ -1,17 +1,42 @@
-import { Pipe } from "../pipe.js";
-import { Yields } from "../util/yields.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function splice(start: number, deleteCount: number, ...elements: Array<any>): Pipe {
-    start = (typeof start === 'number' && start >= 0) ? start : 0;
-    deleteCount = (typeof deleteCount === 'number' && deleteCount >= 0) ? deleteCount : 0;
+export function splice<I, T>(start: number, deleteCount: number, ...elements: Array<T>): Pipe<I, I | T> {
+    const s = (typeof start === 'number' && start >= 0) ? start : 0;
+    const dc = (typeof deleteCount === 'number' && deleteCount >= 0) ? deleteCount : 0;
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
-            ++i;
-            if (i < start || i >= (start + deleteCount)) {
+        let spliced: boolean = false;
+        return (result: IteratorResult<I>): PipeIteratorResult<I | T> => {
+            if (result?.done) {
+                if (!spliced) {
+                    spliced = true;
+                    const results = elements.map(e => Object({ value: e }));
+                    results.push(result);
+                    return results;
+                }
                 return result;
-            } else if (i === start && Array.isArray(elements)) {
-                return Yields(elements);
+            }
+
+            ++i;
+
+            if (i < s) {
+                return result as IteratorResult<I | T>;
+            }
+
+            if (i === s) {
+                spliced = true;
+                const results = elements.map(e => Object({ value: e }));
+
+                if (dc === 0) {
+                    results.push(result);
+                    return results;
+                }
+
+                return results;
+            }
+
+            if (i >= s + dc) {
+                return result as IteratorResult<I | T>;
             }
         };
     }

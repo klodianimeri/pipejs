@@ -1,21 +1,20 @@
-import { Pipe } from "../pipe.js";
-import { Done } from "../util/done.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function slice(start: number, end?: number): Pipe {
-    start = (typeof start === 'number' && start >= 0) ? start : 0;
-    end = (typeof end === 'number' && end > start) ? end : Infinity;
+export function slice<I>(start: number, end?: number): Pipe<I, I> {
+    const s = (typeof start === 'number' && start >= 0) ? start : 0;
+    const e = (typeof end === 'number' && end > s) ? end : Infinity;
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             ++i;
             if (result?.done) {
                 return result;
             }
 
-            if (i >= start && i < end) {
+            if (i >= s && i < e) {
                 return result;
-            } else if (i === end) {
-                return Done();
+            } else if (i === e) {
+                return { done: true, value: undefined };
             }
         };
     }

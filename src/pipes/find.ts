@@ -1,10 +1,9 @@
-import { Pipe } from "../pipe.js";
-import { Done } from "../util/index.js";
+import { Pipe, PipeIteratorResult } from "../pipe.js";
 
-export function find(predicate: (element: any, index?: number) => boolean): Pipe {
+export function find<I>(predicate: (element: I, index: number) => boolean): Pipe<I, I> {
     return () => {
         let i: number = -1;
-        return (result: IteratorResult<any>): IteratorResult<any> | Array<IteratorResult<any>> => {
+        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
             if (result?.done) {
                 return result;
             }
@@ -12,7 +11,7 @@ export function find(predicate: (element: any, index?: number) => boolean): Pipe
             ++i;
 
             if (predicate(result.value, i)) {
-                return [result, Done()];
+                return [result, { done: true, value: undefined }];
             }
         };
     }

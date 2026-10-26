@@ -1,61 +1,46 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import {
+    Operator,
+    Pipe,
+    PipeArgument,
+    PipeResult,
+    CONTINUE,
+    DONE,
+    BREAK,
+} from "../pipe.js";
 import { assertSyncs } from "../util/index.js";
 
-export function intersection<I, T1>(
-    source1: Iterable<T1>
-): Pipe<I, I | T1>;
-
-export function intersection<I, T1, T2>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>
-): Pipe<I, I | T1 | T2>;
-
-export function intersection<I, T1, T2, T3>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>,
-    source3: Iterable<T3>
-): Pipe<I, I | T1 | T2 | T3>;
-
-export function intersection<I, T1, T2, T3, T4>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>,
-    source3: Iterable<T3>,
-    source4: Iterable<T4>
-): Pipe<I, I | T1 | T2 | T3 | T4>;
-
-export function intersection<I, T1, T2, T3, T4, T5>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>,
-    source3: Iterable<T3>,
-    source4: Iterable<T4>,
-    source5: Iterable<T5>
-): Pipe<I, I | T1 | T2 | T3 | T4 | T5>;
-
-export function intersection<I>(
-    ...sources: Array<Iterable<any>>
-): Pipe<I, I | any>;
-
-export function intersection<I>(...sources: Array<Iterable<any>>): Pipe<I, I | any> {
+/**
+ * Set intersection: emits values from the source that appear in
+ * *every* other iterable (each value at most once).
+ *
+ * A ∩ B ∩ C ∩ …
+ */
+export function intersection<I>(...sources: Array<Iterable<I>>): Operator<I, I> {
     assertSyncs(sources);
 
-    return () => {
-        let allSourcesItems: Array<any> = [];
+    return <NextOut = unknown>(next: Pipe<I, NextOut>): Pipe<I, NextOut> => {
+        const sets = sources.map(source => {
+            const s = new Set<I>();
+            for (const item of source) s.add(item);
+            return s;
+        });
 
-        for (const source of sources) {
-            allSourcesItems.push(...source);
-        }
+        const emitted = new Set<I>();
 
-        const sourceSet: Set<any> = new Set<any>(allSourcesItems);
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+            if (element === DONE) return next(DONE);
 
-        return (result: IteratorResult<I>): PipeIteratorResult<I | any> => {
-            if (result?.done) {
-                return result as IteratorResult<I | any>;
+            const value = element as I;
+
+            const inAll = sets.length === 0 || sets.every(s => s.has(value));
+
+            if (inAll && !emitted.has(value)) {
+                emitted.add(value);
+                return next(value);
             }
 
-            if (sourceSet.has(result.value)) {
-                sourceSet.delete(result.value);
-                return result as IteratorResult<I | any>;
-            }
+            return BREAK;
         };
-    }
+    };
 }

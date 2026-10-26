@@ -1,33 +1,54 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import {
+    Operator,
+    Pipe,
+    PipeArgument,
+    PipeResult,
+    CONTINUE,
+    DONE,
+    BREAK,
+    forwardAnd,
+} from "../pipe.js";
+
 import { assertSyncs } from "../util/index.js";
 
-export function union<I>(...sources: Array<Iterable<any>>): Pipe<I, I | any> {
+/**
+ * Set union: A ∪ B ∪ C ∪ …
+ * Emits each distinct value once (main first, then others).
+ */
+export function union<I>(...sources: Array<Iterable<I>>): Operator<I, I> {
     assertSyncs(sources);
 
-    return () => {
-        let buffer: Set<I | any> = new Set<I | any>();
+    return <NextOut = unknown>(
+        next: Pipe<I, NextOut>
+    ): Pipe<I, NextOut> => {
+        const seen = new Set<I>();
 
-        return (result: IteratorResult<I>): PipeIteratorResult<I | any> => {
-            if (result?.done) {
-                let results: Array<any> = new Array<any>();
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                const batch: I[] = [];
 
                 for (const source of sources) {
                     for (const item of source) {
-                        if (!buffer.has(item as any)) {
-                            buffer.add(item as any);
-                            results.push({ value: item });
+                        if (!seen.has(item as I)) {
+                            seen.add(item as I);
+                            batch.push(item as I);
                         }
                     }
                 }
 
-                results.push(result);
-                return results;
+                return forwardAnd(next, batch, DONE);
             }
 
-            if (!buffer.has(result.value)) {
-                buffer.add(result.value);
-                return result;
+            const value = element as I;
+
+            if (!seen.has(value)) {
+                seen.add(value);
+                return next(value);
             }
+
+            return BREAK;
         };
-    }
+    };
 }

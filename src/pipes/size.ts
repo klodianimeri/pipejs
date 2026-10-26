@@ -1,14 +1,20 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, done } from "../pipe.js";
 
-export function size<I>(): Pipe<I, number> {
-    return () => {
-        let i: number = -1;
+export function size<I>(): Operator<I, number> {
+    return <Next = unknown>(next: Pipe<number, Next>): Pipe<I, Next> => {
 
-        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
-            ++i;
-            if (result?.done) {
-                return [{ value: i }, result];
+        let i = 0;
+
+        return (element: PipeArgument<I>): PipeResult<Next> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                return done(next, i);
             }
+
+            i++;
+
+            return BREAK;
         };
-    }
+    };
 }

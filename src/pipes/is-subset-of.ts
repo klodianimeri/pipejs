@@ -1,24 +1,31 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, PipeResults, done } from "../pipe.js";
 import { assertSyncs } from "../util/index.js";
 
-export function isSubsetOf<I>(...sources: Array<Iterable<any>>): Pipe<I, boolean> {
+export function isSubsetOf<I>(...sources: Array<Iterable<any>>): Operator<I, boolean> {
     assertSyncs(sources);
 
-    return () => {
-        let allSourcesItems: Array<any> = [];
+    return <NextOut = unknown>(next: Pipe<boolean, NextOut>): Pipe<I, NextOut> => {
 
-        for (const source of sources) {
-            allSourcesItems.push(...source);
+        const sourceSet = new Set<any>();
+
+        for (let i = 0; i < sources.length; i++) {
+            for (const item of sources[i]) {
+                sourceSet.add(item);
+            }
         }
 
-        const sourceSet: Set<any> = new Set<any>(allSourcesItems);
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
 
-        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
-            if (result?.done) {
-                return [{ value: true }, result];
+            if (element === DONE) {
+                return done(next, true);
             }
 
-            if (!sourceSet.has(result.value)) return [{ value: false }, { done: true, value: undefined }];
+            if (!sourceSet.has(element)) {
+                return done(next, false);
+            }
+
+            return BREAK;
         };
-    }
+    };
 }

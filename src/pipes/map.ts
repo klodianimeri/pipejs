@@ -1,18 +1,26 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import {
+    Pipe,
+    Operator,
+    PipeResult,
+    CONTINUE,
+    DONE,
+    PipeArgument,
+} from "../pipe.js";
 
-export function map<I, T>(callbackFn: (element: I, index: number) => T): Pipe<I, T> {
-    const fn = typeof callbackFn === 'function' ? callbackFn : (e: any) => e;
+export function map<I, T>(callbackFn: (element: I, index: number) => T): Operator<I, T> {
+    const fn = typeof callbackFn === "function" ? callbackFn : ((e: I) => e as unknown as T);
 
-    return () => {
-        let i: number = -1;
-        return (result: IteratorResult<I>): PipeIteratorResult<T> => {
+    return <NextOut = unknown>(next: Pipe<T, NextOut>): Pipe<I, NextOut> => {
+
+        let i = -1;
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+            if (element === DONE) return next(DONE);
+
             ++i;
-            if (result?.done) {
-                return result;
-            }
 
-            (result as any).value = fn(result.value, i);
-            return result as unknown as IteratorResult<T>;
+            return next(fn(element as I, i));
         };
-    }
+    };
 }

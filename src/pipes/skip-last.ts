@@ -1,19 +1,26 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, DONE, BREAK } from "../pipe.js";
 
-export function skipLast<I>(count: number): Pipe<I, I> {
+export function skipLast<I>(count: number): Operator<I, I> {
     const skipCount = (typeof count === "number" && count > 0) ? count : 0;
-    return () => {
-        let items: Array<IteratorResult<I>> = new Array<IteratorResult<I>>();
-        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
-            if (result?.done) {
-                return result;
-            }
 
-            items.push(result);
+    return <NextOut = unknown>(next: Pipe<I, NextOut>): Pipe<I, NextOut> => {
+        if (skipCount === 0) {
+            return (element: PipeArgument<I>): PipeResult<NextOut> => next(element);
+        }
+
+        const items: I[] = [];
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+            if (element === DONE) return next(DONE);
+
+            items.push(element as I);
 
             if (items.length > skipCount) {
-                return items.shift();
+                return next(items.shift()!);
             }
+
+            return BREAK;
         };
-    }
+    };
 }

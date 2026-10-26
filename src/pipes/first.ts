@@ -1,12 +1,12 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, DONE, done } from "../pipe.js";
 
-export function first<I>(): Pipe<I, I> {
-    return () => {
-        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
-            if (result?.done) {
-                return result;
-            }
-            return [result, { done: true, value: undefined }];
+export function first<I>(): Operator<I, I> {
+    return <NextOut = unknown>(next: Pipe<I, NextOut>): Pipe<I, NextOut> => {
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+            if (element === DONE) return next(element);
+
+            return done(next, element);
         };
-    }
+    };
 }

@@ -1,20 +1,16 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, DONE } from "../pipe.js";
 
-export function entries<I>(): Pipe<I, [number, I]> {
-    return () => {
-        let i: number = -1;
+export function entries<I>(): Operator<I, [number, I]> {
+    return <NextOut = unknown>(next: Pipe<[number, I], NextOut>): Pipe<I, NextOut> => {
+        let i = -1;
 
-        return (result: IteratorResult<I>): PipeIteratorResult<[number, I]> => {
-
-            if (result?.done) {
-                return result;
-            }
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+            if (element === DONE) return next(DONE);
 
             ++i;
 
-            (result as IteratorResult<[number, I]>).value = [i, result.value];
-
-            return result as IteratorResult<[number, I]>;
+            return next([i, element as I]);
         };
-    }
+    };
 }

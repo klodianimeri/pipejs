@@ -1,17 +1,27 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, done } from "../pipe.js";
 
-export function max(): Pipe<number, number> {
-    return () => {
-        let max: number = -Infinity;
+export function max(): Operator<number, number> {
+    return <NextOut = unknown>(next: Pipe<number, NextOut>): Pipe<number, NextOut> => {
+        let maxVal = -Infinity;
 
-        return (result: IteratorResult<number>): PipeIteratorResult<number> => {
-            if (result?.done) {
-                return max === (-Infinity) ? result : [{ value: max }, result];
+        return (element: PipeArgument<number>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                if (maxVal !== -Infinity) {
+                    return done(next, maxVal);
+                }
+
+                return next(element);
             }
 
-            if (typeof result.value === 'number' && !isNaN(result.value) && result.value > max) {
-                max = result.value;
+            const num = element as number;
+
+            if (typeof num === "number" && !isNaN(num) && num > maxVal) {
+                maxVal = num;
             }
+
+            return BREAK;
         };
-    }
+    };
 }

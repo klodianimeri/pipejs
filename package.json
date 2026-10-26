@@ -1,6 +1,6 @@
 {
   "name": "@klodianimeri/pipejs",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "source": "src/index.ts",
   "exports": {
@@ -28,9 +28,8 @@
   },
   "scripts": {
     "t": "tsc -w",
-    "test": "jest",
-    "build": "tsup",
-    "prepublishOnly": "npm run test && npm run build"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "build": "tsup && tsc --emitDeclarationOnly --declaration"
   },
   "publishConfig": {
     "access": "public"
@@ -59,15 +58,15 @@
     "filter"
   ],
   "devDependencies": {
-    "@jest/globals": "^30.0.3",
-    "@swc/core": "^1.15.26",
+    "@jest/globals": "^30.5.2",
+    "@swc/core": "^1.16.20",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.14.0",
-    "jest": "^30.0.3",
-    "microbundle": "^0.15.1",
-    "terser": "^5.46.1",
-    "ts-jest": "^29.4.0",
-    "tsup": "^8.5.1",
-    "typescript": "^5.8.3"
-  }
+    "@types/node": "^26.6.5",
+    "jest": "^30.5.2",
+    "terser": "^5.51.2",
+    "tsup": "^9.0.0",
+    "typescript": "^7.0.2",
+    "mitata": "^1.0.34"
+  },
+  "dependencies": {}
 }

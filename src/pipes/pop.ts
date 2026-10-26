@@ -1,17 +1,29 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE } from "../pipe.js";
 
-export function pop<I>(): Pipe<I, I> {
-    return () => {
-        let last: IteratorResult<I>;
-        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
-            if (result?.done) {
-                return result;
+export function pop<I>(): Operator<I, I> {
+    return <Next = unknown>(next: Pipe<I, Next>): Pipe<I, Next> => {
+        let lastValue: I;
+        let hasValue = false; // Safely tracks if we have an element in the buffer queue
+
+        return (element: PipeArgument<I>): PipeResult<Next> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                return next(element);
             }
-            let lastResult = last;
-            last = result;
-            if (typeof lastResult !== "undefined") {
-                return lastResult;
+
+            const current = element as I;
+
+            if (!hasValue) {
+                lastValue = current;
+                hasValue = true;
+                return BREAK;
             }
+
+            const valueToEmit = lastValue;
+            lastValue = current;
+
+            return next(valueToEmit);
         };
-    }
+    };
 }

@@ -1,65 +1,59 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import {
+    Operator,
+    Pipe,
+    PipeArgument,
+    PipeResult,
+    CONTINUE,
+    DONE,
+    BREAK,
+    forwardAnd,
+} from "../pipe.js";
 import { assertSyncs } from "../util/index.js";
 
-export function symmetricDifference<I, T1>(
-    source1: Iterable<T1>
-): Pipe<I, I | T1>;
-
-export function symmetricDifference<I, T1, T2>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>
-): Pipe<I, I | T1 | T2>;
-
-export function symmetricDifference<I, T1, T2, T3>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>,
-    source3: Iterable<T3>
-): Pipe<I, I | T1 | T2 | T3>;
-
-export function symmetricDifference<I, T1, T2, T3, T4>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>,
-    source3: Iterable<T3>,
-    source4: Iterable<T4>
-): Pipe<I, I | T1 | T2 | T3 | T4>;
-
-export function symmetricDifference<I, T1, T2, T3, T4, T5>(
-    source1: Iterable<T1>,
-    source2: Iterable<T2>,
-    source3: Iterable<T3>,
-    source4: Iterable<T4>,
-    source5: Iterable<T5>
-): Pipe<I, I | T1 | T2 | T3 | T4 | T5>;
-
-export function symmetricDifference<I>(
-    ...sources: Array<Iterable<any>>
-): Pipe<I, I | any>;
-
-export function symmetricDifference<I>(...sources: Array<Iterable<any>>): Pipe<I, I | any> {
+/**
+ * Symmetric difference: elements that appear in an odd number of the sets
+ * (main + each other source).
+ *
+ * A △ B △ C △ …
+ */
+export function symmetricDifference<I>(...sources: Array<Iterable<I>>): Operator<I, I> {
     assertSyncs(sources);
 
-    let buffer: Set<I | any> = new Set<I | any>();
+    return <NextOut = unknown>(next: Pipe<I, NextOut>): Pipe<I, NextOut> => {
+        const odd = new Set<I>();
 
-    return () => (result: IteratorResult<I>): PipeIteratorResult<I | any> => {
-        if (result?.done) {
-            let results: Array<any> = new Array<any>();
+        const toggle = (value: I) => {
+            if (odd.has(value)) odd.delete(value);
+            else odd.add(value);
+        };
 
-            for (const source of sources) {
-                for (const item of source) {
-                    if (!buffer.has(item)) {
-                        buffer.add(item);
-                        results.push({ value: item });
-                    }
+        for (const source of sources) {
+            const seen = new Set<I>();
+            for (const item of source) {
+                if (!seen.has(item)) {
+                    seen.add(item);
+                    toggle(item as I);
                 }
             }
-
-            results.push(result);
-            return results;
         }
 
-        if (!buffer.has(result.value)) {
-            buffer.add(result.value);
-            return result;
-        }
+        const seenMain = new Set<I>();
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                return forwardAnd(next, odd, DONE);
+            }
+
+            const value = element as I;
+
+            if (!seenMain.has(value)) {
+                seenMain.add(value);
+                toggle(value);
+            }
+
+            return BREAK;
+        };
     };
 }

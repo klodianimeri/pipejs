@@ -1,23 +1,39 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, done } from "../pipe.js";
 
-export function reduce<I, T>(
-    accumulator: (acc: T, currentValue: I, index: number) => T,
-    initialValue?: T
-): Pipe<I, T> {
-    return () => {
-        let i: number = -1;
+export function reduce<I, T>(accumulator: (acc: T, currentValue: I, index: number) => T, initialValue?: T): Operator<I, T> {
+
+    return <Next = unknown>(next: Pipe<T, Next>): Pipe<I, Next> => {
+
+        let i = -1;
         let value: T;
-        return (result: IteratorResult<I>): PipeIteratorResult<T> => {
+        let hasValue = typeof initialValue !== "undefined";
+
+        if (hasValue) {
+            value = initialValue!;
+        }
+
+        return (element: PipeArgument<I>): PipeResult<Next> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                if (hasValue || i >= 0) {
+                    return done(next, value);
+                }
+
+                return next(DONE);
+            }
+
             ++i;
-            if (i === 0) {
-                value = initialValue ?? (result.value as unknown as T);
+
+            if (!hasValue && i === 0) {
+                value = element as unknown as T;
+                hasValue = true;
+                return BREAK;
             }
 
-            if (result?.done) {
-                return [{ value }, result];
-            }
+            value = accumulator(value, element as I, i);
 
-            value = accumulator(value, result.value, i);
+            return BREAK;
         };
-    }
+    };
 }

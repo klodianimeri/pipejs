@@ -4,5 +4,3 @@ package.dev.json
 dev
 *.tgz
 .npmrc
-
-src/benchmark.ts

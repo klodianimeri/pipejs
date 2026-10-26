@@ -1,171 +1,201 @@
-import { Pipe, PipeIterator, PipeIteratorResult } from "../pipe.js";
+import {
+    Operator,
+    Pipe,
+    PipeResult,
+    DONE,
+    CONTINUE,
+    BREAK,
+    start,
+    terminal,
+    PipeResults,
+    ErrorControl,
+} from "../pipe.js";
 
-export function pipeAsync<TSource, T1>(
+// ---------- Overloads (up to 10 operators) ----------
+
+export function pipeAsync<TSource>(
     source: AsyncIterable<TSource>
 ): AsyncIterable<TSource>;
 
 export function pipeAsync<TSource, T1>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>
+    op1: Operator<TSource, T1>
 ): AsyncIterable<T1>;
 
 export function pipeAsync<TSource, T1, T2>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>
 ): AsyncIterable<T2>;
 
 export function pipeAsync<TSource, T1, T2, T3>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>
 ): AsyncIterable<T3>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>
 ): AsyncIterable<T4>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4, T5>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>,
-    p5: Pipe<T4, T5>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>,
+    op5: Operator<T4, T5>
 ): AsyncIterable<T5>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4, T5, T6>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>,
-    p5: Pipe<T4, T5>,
-    p6: Pipe<T5, T6>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>,
+    op5: Operator<T4, T5>,
+    op6: Operator<T5, T6>
 ): AsyncIterable<T6>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>,
-    p5: Pipe<T4, T5>,
-    p6: Pipe<T5, T6>,
-    p7: Pipe<T6, T7>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>,
+    op5: Operator<T4, T5>,
+    op6: Operator<T5, T6>,
+    op7: Operator<T6, T7>
 ): AsyncIterable<T7>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7, T8>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>,
-    p5: Pipe<T4, T5>,
-    p6: Pipe<T5, T6>,
-    p7: Pipe<T6, T7>,
-    p8: Pipe<T7, T8>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>,
+    op5: Operator<T4, T5>,
+    op6: Operator<T5, T6>,
+    op7: Operator<T6, T7>,
+    op8: Operator<T7, T8>
 ): AsyncIterable<T8>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7, T8, T9>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>,
-    p5: Pipe<T4, T5>,
-    p6: Pipe<T5, T6>,
-    p7: Pipe<T6, T7>,
-    p8: Pipe<T7, T8>,
-    p9: Pipe<T8, T9>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>,
+    op5: Operator<T4, T5>,
+    op6: Operator<T5, T6>,
+    op7: Operator<T6, T7>,
+    op8: Operator<T7, T8>,
+    op9: Operator<T8, T9>
 ): AsyncIterable<T9>;
 
 export function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
     source: AsyncIterable<TSource>,
-    p1: Pipe<TSource, T1>,
-    p2: Pipe<T1, T2>,
-    p3: Pipe<T2, T3>,
-    p4: Pipe<T3, T4>,
-    p5: Pipe<T4, T5>,
-    p6: Pipe<T5, T6>,
-    p7: Pipe<T6, T7>,
-    p8: Pipe<T7, T8>,
-    p9: Pipe<T8, T9>,
-    p10: Pipe<T9, T10>
+    op1: Operator<TSource, T1>,
+    op2: Operator<T1, T2>,
+    op3: Operator<T2, T3>,
+    op4: Operator<T3, T4>,
+    op5: Operator<T4, T5>,
+    op6: Operator<T5, T6>,
+    op7: Operator<T6, T7>,
+    op8: Operator<T7, T8>,
+    op9: Operator<T8, T9>,
+    op10: Operator<T9, T10>
 ): AsyncIterable<T10>;
 
-export function pipeAsync(
-    source: AsyncIterable<any>,
-    ...pipes: Array<Pipe<any, any>>
-): AsyncIterable<any>;
+export function pipeAsync(source: AsyncIterable<any>, ...operators: Operator<any, any>[]): AsyncIterable<any>;
 
-export async function* pipeAsync(source: AsyncIterable<any>, ...pipes: Array<Pipe>): AsyncIterable<any> {
-    if (!source || typeof source[Symbol.asyncIterator] !== 'function') {
-        throw new Error(`Source ${source} not an async iterator!`);
+export function pipeAsync(source: AsyncIterable<any>, ...operators: Operator<any, any>[]): AsyncIterable<any> {
+    if (!source || typeof source[Symbol.asyncIterator] !== "function") {
+        throw new Error(`Source ${source} is not an async iterable`);
     }
 
-    if (!Array.isArray(pipes) || pipes.length === 0) {
-        yield* source;
-        return;
+    const ops = operators.filter((o) => typeof o === "function");
+
+
+    if (ops.length === 0) {
+        return source;
     }
 
-    let pipeIterators: Array<PipeIterator> = new Array<PipeIterator>();
+    let current: Pipe<any, any> = terminal;
 
-    for (const pipe of pipes) {
-        pipeIterators.push(pipe());
-    }
+    return {
+        async *[Symbol.asyncIterator]() {
 
-    const length = pipeIterators.length;
-
-    let iterator = source[Symbol.asyncIterator]();
-
-    let iteratorResult: IteratorResult<any> = await iterator.next();
-
-    while (true) {
-
-        let done: boolean | undefined = iteratorResult.done;
-
-        let results: Array<IteratorResult<any>> = new Array<IteratorResult<any>>(iteratorResult);
-
-        for (let i = 0; i < length; i++) {
-            const allpipeResults: Array<IteratorResult<any>> = new Array<IteratorResult<any>>();
-            const isLastPipe: boolean = i === pipes.length - 1;
-
-            for (let j = 0; j < results.length; j++) {
-                const piperesult: PipeIteratorResult = pipeIterators[i](results[j]);
-
-                if (piperesult === undefined) continue;
-
-                if (Array.isArray(piperesult)) {
-                    for (let e = 0; e < piperesult.length; e++) {
-                        const item: IteratorResult<any> = piperesult[e];
-
-                        if (item === undefined) continue;
-
-                        if (!isLastPipe) {
-                            allpipeResults.push(item);
-                        } else {
-                            if (item.done) return;
-                            if ('value' in item) yield item.value;
-                        }
-                    }
-                } else if (!isLastPipe) {
-                    allpipeResults.push(piperesult);
-                } else {
-                    if (piperesult.done) return;
-                    if ('value' in piperesult) yield piperesult.value;
-                }
+            for (let i = ops.length - 1; i >= 0; i--) {
+                current = ops[i](current);
             }
-            results = allpipeResults;
-        }
 
-        if (done) break;
+            const head = start(current);
 
-        iteratorResult = await iterator.next();
-    }
+            const results: any[] = [];
+            let done = false;
+
+            const handle = async (result: PipeResult | Promise<PipeResult>): Promise<boolean> => {
+                result = await result;
+
+                if (result instanceof PipeResults) {
+                    for (const item of result) {
+                        if (item instanceof CONTINUE) {
+                            if (item instanceof ErrorControl) {
+                                results.push(item);
+                                return true;
+                            }
+                            continue;
+                        }
+                        if (item === BREAK) continue;
+                        if (item === DONE) return true;
+                        results.push(item);
+                    }
+                    return false;
+                }
+
+                if (result instanceof CONTINUE) {
+                    if (result instanceof ErrorControl) {
+                        results.push(result);
+                        return true;
+                    }
+                    return false;
+                }
+                if (result === BREAK) return false;
+                if (result === DONE) return true;
+
+                results.push(result);
+                return false;
+            };
+
+            for await (const element of source) {
+                if (await handle(head(element))) {
+                    done = true;
+                    break;
+                }
+
+                for (const element of results) {
+                    if (element instanceof ErrorControl) throw element.error;
+                    yield element;
+                }
+
+                results.length = 0;
+            }
+
+
+            if (!done) {
+                await handle(head(DONE));
+            }
+
+            for (const element of results) {
+                if (element instanceof ErrorControl) throw element.error;
+                yield element;
+            }
+        },
+    };
 }

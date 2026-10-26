@@ -1,43 +1,71 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, PipeResults, forward, forwardAnd } from "../pipe.js";
 
-export function splice<I, T>(start: number, deleteCount: number, ...elements: Array<T>): Pipe<I, I | T> {
+export function splice<I, T>(start: number, deleteCount: number, ...elements: Array<T>): Operator<I, I | T> {
     const s = (typeof start === 'number' && start >= 0) ? start : 0;
     const dc = (typeof deleteCount === 'number' && deleteCount >= 0) ? deleteCount : 0;
-    return () => {
-        let i: number = -1;
-        let spliced: boolean = false;
-        return (result: IteratorResult<I>): PipeIteratorResult<I | T> => {
-            if (result?.done) {
+
+    return <NextOut = unknown>(next: Pipe<I | T, NextOut>): Pipe<I, NextOut> => {
+
+        let i = -1;
+        let spliced = false;
+
+        const pushElementsToBatch = (batch: any[]) => {
+            for (let j = 0; j < elements.length; j++) {
+                const stepResult = next(elements[j]);
+                if (Array.isArray(stepResult)) {
+                    for (let k = 0; k < stepResult.length; k++) batch.push(stepResult[k]);
+                } else {
+                    batch.push(stepResult);
+                }
+            }
+        };
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
                 if (!spliced) {
                     spliced = true;
-                    const results = elements.map(e => Object({ value: e }));
-                    results.push(result);
-                    return results;
+                    const endBatch: any[] = [];
+                    pushElementsToBatch(endBatch);
+
+                    return forwardAnd(next, endBatch, DONE);
+
                 }
-                return result;
+                return next(element);
             }
 
             ++i;
 
             if (i < s) {
-                return result as IteratorResult<I | T>;
+                return next(element as unknown as I | T);
             }
 
             if (i === s) {
                 spliced = true;
-                const results = elements.map(e => Object({ value: e }));
+                const batchResults: any[] = [];
+
+                pushElementsToBatch(batchResults);
 
                 if (dc === 0) {
-                    results.push(result);
-                    return results;
+                    const stepResult = next(element as unknown as I | T);
+
+                    if (Array.isArray(stepResult)) {
+                        for (const item of stepResult) {
+                            batchResults.push(item);
+                        }
+                    }
+                    else batchResults.push(stepResult);
                 }
 
-                return results;
+                return new PipeResults(batchResults).singleOrDefault();
             }
 
             if (i >= s + dc) {
-                return result as IteratorResult<I | T>;
+                return next(element as unknown as I | T);
             }
+
+            return BREAK;
         };
-    }
+    };
 }

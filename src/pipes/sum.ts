@@ -1,15 +1,24 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, done } from "../pipe.js";
 
-export function sum<I>(): Pipe<I, number> {
-    return () => {
-        let sum: number = 0;
-        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
-            if (result?.done) {
-                return [{ value: sum }, result];
+export function sum<I>(): Operator<I, number> {
+    return <NextOut = unknown>(next: Pipe<number, NextOut>): Pipe<I, NextOut> => {
+
+        let totalSum = 0;
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                return done(next, totalSum);
             }
-            if (typeof result.value === 'number' && !isNaN(result.value)) {
-                sum += result.value;
+
+            const val = element as any;
+
+            if (typeof val === 'number' && !isNaN(val)) {
+                totalSum += val;
             }
+
+            return BREAK;
         };
-    }
+    };
 }

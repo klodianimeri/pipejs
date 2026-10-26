@@ -1,19 +1,24 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, done } from "../pipe.js";
 
-export function every<I>(predicate: (element: I, index: number) => boolean): Pipe<I, boolean> {
-    return () => {
-        let i: number = -1;
+export function every<I>(predicate: (element: I, index: number) => boolean): Operator<I, boolean> {
 
-        return (result: IteratorResult<I>): PipeIteratorResult<boolean> => {
-            if (result?.done) {
-                return [{ value: true }, result];
+    return <NextOut = unknown>(next: Pipe<boolean, NextOut>): Pipe<I, NextOut> => {
+        let i = -1;
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                return done(next, true);
             }
 
             ++i;
 
-            if (!predicate(result.value, i)) {
-                return [{ value: false }, { done: true, value: undefined }];
+            if (!predicate(element as I, i)) {
+                return done(next, false);
             }
+
+            return BREAK;
         };
-    }
+    };
 }

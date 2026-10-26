@@ -1,13 +1,29 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import {
+    Operator,
+    Pipe,
+    PipeArgument,
+    PipeResult,
+    BREAK,
+    CONTINUE,
+    DONE,
+    done,
+} from "../pipe.js";
 
-export function count<I>(): Pipe<I, number> {
-    return () => {
-        let i: number = -1;
-        return (result: IteratorResult<I>): PipeIteratorResult<number> => {
-            ++i;
-            if (result?.done) {
-                return [{ value: i }, result];
+export function count<I = unknown>(): Operator<I, number> {
+    return <NextOut = unknown>(next: Pipe<number, NextOut>): Pipe<I, NextOut> => {
+        let counter = 0;
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) {
+                return next(CONTINUE);
             }
+
+            if (element === DONE) {
+                return done(next, counter);
+            }
+
+            counter++;
+            return BREAK;
         };
-    }
+    };
 }

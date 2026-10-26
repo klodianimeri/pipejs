@@ -1,17 +1,20 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, done } from "../pipe.js";
 
-export function toArray<I>(): Pipe<I, I[]> {
-    return () => {
-        let buffer: Array<I> = new Array<I>();
-        var i: number = -1;
+export function toArray<I>(): Operator<I, I[]> {
+    return <NextOut = unknown>(next: Pipe<I[], NextOut>): Pipe<I, NextOut> => {
 
-        return (result: IteratorResult<I>): PipeIteratorResult<I[]> => {
-            ++i;
-            if (result?.done) {
-                return [{ value: buffer }, result];
+        const buffer: I[] = [];
+
+        return (element: PipeArgument<I>): PipeResult<NextOut> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                return done(next, buffer);
             }
 
-            buffer.push(result.value);
+            buffer.push(element as I);
+
+            return BREAK;
         };
-    }
+    };
 }

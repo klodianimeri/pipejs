@@ -1,16 +1,21 @@
-import { Pipe, PipeIteratorResult } from "../pipe.js";
+import { Operator, Pipe, PipeArgument, PipeResult, CONTINUE, BREAK, DONE, forwardAnd } from "../pipe.js";
 
-export function reverse<I>(): Pipe<I, I> {
-    return () => {
-        let buffer: Array<IteratorResult<I>> = new Array<IteratorResult<I>>();
-        return (result: IteratorResult<I>): PipeIteratorResult<I> => {
-            if (result?.done) {
-                buffer = buffer.reverse();
-                buffer.push(result);
-                return buffer;
+export function reverse<I>(): Operator<I, I> {
+    return <Next = unknown>(next: Pipe<I, Next>): Pipe<I, Next> => {
+        const buffer: I[] = [];
+
+        return (element: PipeArgument<I>): PipeResult<Next> => {
+            if (element instanceof CONTINUE) return next(element);
+
+            if (element === DONE) {
+                buffer.reverse();
+
+                return forwardAnd(next, buffer, DONE);
             }
 
-            buffer.push(result);
+            buffer.push(element as I);
+
+            return BREAK;
         };
-    }
+    };
 }

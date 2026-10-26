@@ -1,0 +1,13 @@
+import { Operator } from "../pipe.js";
+export declare function pipeSync<TSource>(source: Iterable<TSource>): Iterable<TSource>;
+export declare function pipeSync<TSource, T1>(source: Iterable<TSource>, op1: Operator<TSource, T1>): Iterable<T1>;
+export declare function pipeSync<TSource, T1, T2>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>): Iterable<T2>;
+export declare function pipeSync<TSource, T1, T2, T3>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>): Iterable<T3>;
+export declare function pipeSync<TSource, T1, T2, T3, T4>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>): Iterable<T4>;
+export declare function pipeSync<TSource, T1, T2, T3, T4, T5>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>): Iterable<T5>;
+export declare function pipeSync<TSource, T1, T2, T3, T4, T5, T6>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>): Iterable<T6>;
+export declare function pipeSync<TSource, T1, T2, T3, T4, T5, T6, T7>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>): Iterable<T7>;
+export declare function pipeSync<TSource, T1, T2, T3, T4, T5, T6, T7, T8>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>, op8: Operator<T7, T8>): Iterable<T8>;
+export declare function pipeSync<TSource, T1, T2, T3, T4, T5, T6, T7, T8, T9>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>, op8: Operator<T7, T8>, op9: Operator<T8, T9>): Iterable<T9>;
+export declare function pipeSync<TSource, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(source: Iterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>, op8: Operator<T7, T8>, op9: Operator<T8, T9>, op10: Operator<T9, T10>): Iterable<T10>;
+export declare function pipeSync(source: Iterable<any>, ...operators: Operator<any, any>[]): Iterable<any>;

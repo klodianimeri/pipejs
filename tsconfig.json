@@ -1,17 +1,22 @@
 {
     "compilerOptions": {
-        "target": "es2018",
-        "module": "esnext",
+        "target": "es6",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "sourceMap": true,
         "rootDir": "src",
         "outDir": "dist",
         "removeComments": true,
-        "declaration": true
+        "declaration": true,
+        "types": [
+            "jest"
+        ]
     },
     "exclude": [
+        "src/tests",
+        "src/bench",
         "node_modules",
-        "*.test.ts",
-        "**/**/**/*.test.ts",
+        "tsup.config.ts",
         "dist/*.d.ts",
         "dist/**/*.d.ts"
     ]

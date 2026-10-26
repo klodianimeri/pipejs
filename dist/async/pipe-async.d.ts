@@ -1,0 +1,13 @@
+import { Operator } from "../pipe.js";
+export declare function pipeAsync<TSource>(source: AsyncIterable<TSource>): AsyncIterable<TSource>;
+export declare function pipeAsync<TSource, T1>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>): AsyncIterable<T1>;
+export declare function pipeAsync<TSource, T1, T2>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>): AsyncIterable<T2>;
+export declare function pipeAsync<TSource, T1, T2, T3>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>): AsyncIterable<T3>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>): AsyncIterable<T4>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4, T5>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>): AsyncIterable<T5>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4, T5, T6>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>): AsyncIterable<T6>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>): AsyncIterable<T7>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7, T8>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>, op8: Operator<T7, T8>): AsyncIterable<T8>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7, T8, T9>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>, op8: Operator<T7, T8>, op9: Operator<T8, T9>): AsyncIterable<T9>;
+export declare function pipeAsync<TSource, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(source: AsyncIterable<TSource>, op1: Operator<TSource, T1>, op2: Operator<T1, T2>, op3: Operator<T2, T3>, op4: Operator<T3, T4>, op5: Operator<T4, T5>, op6: Operator<T5, T6>, op7: Operator<T6, T7>, op8: Operator<T7, T8>, op9: Operator<T8, T9>, op10: Operator<T9, T10>): AsyncIterable<T10>;
+export declare function pipeAsync(source: AsyncIterable<any>, ...operators: Operator<any, any>[]): AsyncIterable<any>;

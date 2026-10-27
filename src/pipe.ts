@@ -13,12 +13,13 @@ export class PipeResults<T = unknown> {
     #buffer: Array<T | PipeControl> = [];
 
     constructor(results: Array<T | PipeControl> = []) {
-        if (!Array.isArray(results) && typeof results[Symbol.iterator] === 'function') {
+        if (Array.isArray(results)) {
+            this.#buffer = results;
+        } else if (typeof results[Symbol.iterator] === 'function') {
             for (const element of results as Iterable<T>) {
                 this.#buffer.push(element);
             }
         }
-        this.#buffer = results;
     }
 
     get(index: number): T | PipeControl {

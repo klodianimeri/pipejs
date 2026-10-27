@@ -30,7 +30,7 @@ npm i @klodianimeri/pipejs
 Signature
 
 ```ts
-function* pipeSync(source: Iterable<any>, ...pipes: Array<Pipe>): Iterable<any>
+function pipeSync(source: Iterable<any>, ...pipes: Array<Pipe>): Iterable<any>
 ```
 
 Usage
@@ -55,7 +55,7 @@ for (let item of results) {
 Signature
 
 ```ts
-async function* pipeAsync(source: AsyncIterable<any>, ...pipes: Array<Pipe>): AsyncIterable<any>
+async function pipeAsync(source: AsyncIterable<any>, ...pipes: Array<Pipe>): AsyncIterable<any>
 ```
 
 Usage
@@ -230,7 +230,7 @@ const result = [...pipeSync(
 
 ## Browser
 
-https://unpkg.com/@klodianimeri/pipejs@^2/dist/index.global.js
+https://unpkg.com/@klodianimeri/pipejs@^3/dist/index.global.js
 
 The global namespace is pipejs:
 
